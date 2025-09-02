@@ -1,0 +1,414 @@
+import React, { useEffect, useMemo, useState } from "react";
+
+// Single-file React portfolio/lead-gen site for a freelance Software Tester
+// No external deps; Tailwind classes for styling. Replace placeholders below.
+
+export default function App() {
+  // --- SIMPLE DARK MODE TOGGLE (persists) ---
+  const [dark, setDark] = useState(false);
+  useEffect(() => {
+    const saved = localStorage.getItem("theme-dark") === "true";
+    setDark(saved);
+    document.documentElement.classList.toggle("dark", saved);
+  }, []);
+  const toggleDark = () => {
+    const next = !dark;
+    setDark(next);
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("theme-dark", String(next));
+  };
+
+  // --- MAILTO HANDLER FOR LEADS ---
+  function mailTo({ name, email, message, budget, service }) {
+    const subject = encodeURIComponent(`New ${service || "Testing"} Inquiry from ${name || "Client"}`);
+    const body = encodeURIComponent(
+      `Hi Sudip,\n\nI have a ${service || "software testing"} requirement.\n\nDetails: ${message || "(add details)"}\nBudget/Timeline: ${budget || "(tbd)"}\nEmail: ${email || "(add your email)"}\n\n— Sent from your website`
+    );
+    window.location.href = `mailto:sudipmajiofficial@gmail.com?subject=${subject}&body=${body}`; // <-- replace email
+  }
+
+  // --- QUICK FAQ DATA ---
+  const faqs = useMemo(
+    () => [
+      {
+        q: "What kinds of testing do you offer?",
+        a: "Manual functional testing, test automation with Selenium + Java, API testing (Postman), database/SQL checks, mobile testing (Android), regression and system/integration testing, and bug reporting with clear repro steps.",
+      },
+      {
+        q: "How do we collaborate?",
+        a: "I can join your Jira/ClickUp/Trello, attend standups in IST, and deliver daily test reports with screenshots and videos.",
+      },
+      {
+        q: "Can you start quickly?",
+        a: "Yes—after a short discovery call to define scope, I can begin with a smoke test within 24–48 hours and share a test plan.",
+      },
+      {
+        q: "Do you sign NDAs?",
+        a: "Absolutely. I’m happy to sign an NDA before reviewing your product.",
+      },
+    ],
+    []
+  );
+
+  // --- SIMPLE FORM STATE ---
+  const [form, setForm] = useState({ name: "", email: "", service: "Manual & Functional Testing", budget: "", message: "" });
+
+  const services = [
+    { title: "Manual & Functional Testing", desc: "User flows, edge cases, UI/UX issues, acceptance testing.", badge: "Core" },
+    { title: "Automation (Selenium + Java)", desc: "Stable, maintainable test suites for web apps; CI-ready.", badge: "Popular" },
+    { title: "API Testing (Postman)", desc: "Contract, smoke, and regression tests; environments & collections.", badge: "API" },
+    { title: "SQL & Data Validation", desc: "Verify persistence, constraints, and complex reports.", badge: "DB" },
+    { title: "Mobile App Testing (Android)", desc: "Real-device tests, network conditions, battery & performance.", badge: "Mobile" },
+    { title: "Bug Reporting & Triage", desc: "Clear repro steps, severity, screenshots, and video evidence.", badge: "QA" },
+  ];
+
+  const projects = [
+    {
+      name: "E‑commerce Checkout Reliability",
+      result: "Cut checkout bugs by 70% and raised conversion by 12% via test suite + data validation.",
+      stack: ["Selenium", "Java", "Jenkins", "MySQL"],
+    },
+    {
+      name: "Fintech App Stability (Android)",
+      result: "Detected critical crash on stock view and improved session recovery; MTTR down 40%.",
+      stack: ["Android", "Charles", "ADB", "Jira"],
+    },
+    {
+      name: "API Regression for SaaS CRM",
+      result: "Automated 150+ API cases; reduced release verification from 2 days to 2 hours.",
+      stack: ["Postman", "Newman", "CI"],
+    },
+  ];
+
+  const tiers = [
+    {
+      name: "Starter Sprint",
+      price: "₹14,999",
+      period: "/week",
+      features: ["Up to 10 pages/modules", "Daily smoke tests", "Bug report with evidence", "Basic API checks"],
+      cta: "Book Starter",
+    },
+    {
+      name: "Growth",
+      price: "₹49,999",
+      period: "/month",
+      features: ["Manual + Automation mix", "Regression suite", "Sprint ceremonies support", "Test reports & coverage"],
+      cta: "Book Growth",
+      highlight: true,
+    },
+    {
+      name: "Custom QA Team",
+      price: "Custom",
+      period: "",
+      features: ["Flexible hours", "On‑demand testing", "CI/CD integration", "Security & performance add‑ons"],
+      cta: "Discuss Needs",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-white to-slate-100 text-slate-900 dark:from-slate-950 dark:to-slate-900 dark:text-slate-100">
+      {/* NAVBAR */}
+      <header className="sticky top-0 z-40 backdrop-blur bg-white/70 dark:bg-slate-950/70 border-b border-slate-200/60 dark:border-slate-800">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+          <a href="#home" className="font-semibold text-xl tracking-tight">Sudip Maji <span className="text-slate-500">| QA Engineer</span></a>
+          <nav className="hidden md:flex gap-6 text-sm">
+            <a className="hover:text-indigo-600" href="#services">Services</a>
+            <a className="hover:text-indigo-600" href="#projects">Projects</a>
+            <a className="hover:text-indigo-600" href="#pricing">Pricing</a>
+            <a className="hover:text-indigo-600" href="#faq">FAQ</a>
+            <a className="hover:text-indigo-600" href="#contact">Contact</a>
+          </nav>
+          <div className="flex items-center gap-2">
+            <button onClick={toggleDark} aria-label="Toggle theme" className="rounded-2xl px-3 py-1.5 text-sm border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">{dark ? "Light" : "Dark"}</button>
+            <a href="#contact" className="rounded-2xl px-4 py-2 text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500 shadow">Get a Quote</a>
+          </div>
+        </div>
+      </header>
+
+      {/* HERO */}
+      <section id="home" className="relative overflow-hidden">
+        <div className="absolute inset-0 -z-10 opacity-40 dark:opacity-30" aria-hidden>
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="grad" cx="50%" cy="50%" r="80%">
+                <stop offset="0%" stopColor="#6366f1" />
+                <stop offset="100%" stopColor="transparent" />
+              </radialGradient>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grad)" />
+          </svg>
+        </div>
+        <div className="max-w-6xl mx-auto px-4 py-20 md:py-28 grid md:grid-cols-2 gap-10 items-center">
+          <div>
+            <h1 className="text-3xl md:text-5xl font-bold leading-tight">
+              Ship confidently with a <span className="text-indigo-600">dedicated QA</span> partner.
+            </h1>
+            <p className="mt-4 text-slate-600 dark:text-slate-300 text-lg">
+              I’m Sudip Maji, a software tester focused on functional, system, and integration testing with solid automation skills in Selenium + Java. I help teams find bugs early, reduce release risk, and improve product quality.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a href="#contact" className="px-5 py-3 rounded-2xl bg-indigo-600 text-white font-medium shadow hover:bg-indigo-500">Start a Project</a>
+              <a href="#projects" className="px-5 py-3 rounded-2xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">See Case Studies</a>
+              <a href="/Sudip_Maji_Resume.pdf" className="px-5 py-3 rounded-2xl border border-slate-300 dark:border-slate-700">Download CV</a>
+            </div>
+            <ul className="mt-6 flex flex-wrap gap-3 text-sm text-slate-600 dark:text-slate-300">
+              {[
+                "Manual & Exploratory",
+                "Selenium + Java",
+                "API / Postman",
+                "SQL Checks",
+                "Android Testing",
+                "Jira / STLC / Defect Life Cycle",
+              ].map((chip) => (
+                <li key={chip} className="px-3 py-1 rounded-full border border-slate-300 dark:border-slate-700">{chip}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="relative">
+            <div className="aspect-[4/3] rounded-3xl bg-white dark:bg-slate-900 shadow-xl border border-slate-200 dark:border-slate-800 p-5">
+              <div className="grid grid-cols-3 gap-3 h-full">
+                {["Test Plan", "Bug Report", "Regression", "Selenium", "API", "SQL", "Android", "Jira", "Coverage"].map((card) => (
+                  <div key={card} className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40 flex items-center justify-center text-xs md:text-sm font-medium">
+                    {card}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-slate-500 text-center">Clean reports • Clear repro steps • Fast feedback</p>
+          </div>
+        </div>
+      </section>
+
+      {/* SERVICES */}
+      <section id="services" className="max-w-6xl mx-auto px-4 py-16">
+        <h2 className="text-2xl md:text-3xl font-semibold">Services</h2>
+        <p className="mt-2 text-slate-600 dark:text-slate-300">Pick and mix based on your release goals.</p>
+        <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {services.map((s) => (
+            <div key={s.title} className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+              <div className="text-xs inline-flex px-2 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-300">{s.badge}</div>
+              <h3 className="mt-3 text-lg font-semibold">{s.title}</h3>
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{s.desc}</p>
+              <button onClick={() => setForm((f) => ({ ...f, service: s.title }))} className="mt-4 text-sm underline underline-offset-4 hover:text-indigo-600">I need this</button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* PROJECTS */}
+      <section id="projects" className="max-w-6xl mx-auto px-4 py-16">
+        <h2 className="text-2xl md:text-3xl font-semibold">Recent Case Studies</h2>
+        <p className="mt-2 text-slate-600 dark:text-slate-300">Measurable impact from testing done right.</p>
+        <div className="mt-8 grid md:grid-cols-3 gap-6">
+          {projects.map((p) => (
+            <div key={p.name} className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm flex flex-col">
+              <div className="aspect-video rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900 flex items-center justify-center text-sm">{p.stack.join(" • ")}</div>
+              <h3 className="mt-4 font-semibold">{p.name}</h3>
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 flex-1">{p.result}</p>
+              <a href="#contact" className="mt-4 text-indigo-600 hover:underline">Request similar work →</a>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* PRICING */}
+      <section id="pricing" className="max-w-6xl mx-auto px-4 py-16">
+        <h2 className="text-2xl md:text-3xl font-semibold">Pricing</h2>
+        <p className="mt-2 text-slate-600 dark:text-slate-300">Transparent packages. Custom plans available.</p>
+        <div className="mt-8 grid md:grid-cols-3 gap-6">
+          {tiers.map((t) => (
+            <div key={t.name} className={`rounded-3xl border p-6 shadow-sm ${t.highlight ? "bg-indigo-600 text-white border-indigo-600" : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"}`}>
+              <h3 className="font-semibold text-lg">{t.name}</h3>
+              <div className="mt-2 text-3xl font-bold">{t.price}<span className="text-base font-medium">{t.period}</span></div>
+              <ul className="mt-4 space-y-2 text-sm">
+                {t.features.map((f) => (
+                  <li key={f} className="flex items-start gap-2"><span className="mt-1">✅</span><span>{f}</span></li>
+                ))}
+              </ul>
+              <button onClick={() => setForm((f) => ({ ...f, message: `${f.message}\nInterested in: ${t.name}` }))} className={`mt-6 w-full rounded-2xl px-4 py-2 font-medium ${t.highlight ? "bg-white text-indigo-700" : "bg-indigo-600 text-white hover:bg-indigo-500"}`}>{t.cta}</button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section className="max-w-6xl mx-auto px-4 py-16">
+        <h2 className="text-2xl md:text-3xl font-semibold">What clients say</h2>
+        <div className="mt-8 grid md:grid-cols-3 gap-6">
+          {[
+            {
+              name: "Product Manager, E‑commerce",
+              quote: "Sudip’s bug reports are crystal clear. Our releases are smoother and support tickets dropped noticeably.",
+            },
+            {
+              name: "CTO, Fintech Startup",
+              quote: "He found a critical crash on Android that we missed for weeks. Fast, thorough, and proactive.",
+            },
+            {
+              name: "Founder, SaaS CRM",
+              quote: "Automation suite paid for itself within a month. Regression time fell from days to hours.",
+            },
+          ].map((t) => (
+            <figure key={t.name} className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm">
+              <blockquote className="text-sm text-slate-700 dark:text-slate-300">“{t.quote}”</blockquote>
+              <figcaption className="mt-3 text-xs text-slate-500">— {t.name}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="max-w-6xl mx-auto px-4 py-16">
+        <h2 className="text-2xl md:text-3xl font-semibold">FAQ</h2>
+        <div className="mt-6 grid md:grid-cols-2 gap-6">
+          {faqs.map((f) => (
+            <details key={f.q} className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+              <summary className="font-medium cursor-pointer">{f.q}</summary>
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      {/* CONTACT / LEAD FORM */}
+      <section id="contact" className="max-w-6xl mx-auto px-4 py-16">
+        <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 md:p-10 shadow-sm">
+          <div className="grid md:grid-cols-2 gap-8 items-start">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-semibold">Tell me about your project</h2>
+              <p className="mt-2 text-slate-600 dark:text-slate-300">Get a free test plan outline and timeline within 24 hours.</p>
+              <ul className="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                <li>• Email: <a className="underline" href="mailto:sudipmajiofficial@gmail.com">sudipmajiofficial@gmail.com</a></li>
+                <li>• WhatsApp: <a className="underline" href="https://wa.me/919876543210">+91 98765 43210</a> {/* replace */}</li>
+                <li>• Kolkata, India (IST)</li>
+              </ul>
+            </div>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  await submitLead(form);
+                  setForm({ name: "", email: "", service: form.service, budget: "", message: "" });
+                } catch (_) {}
+              }}
+              className="grid gap-4"
+            >
+              <div className="grid gap-2">
+                <label className="text-sm">Name</label>
+                <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="rounded-2xl border border-slate-300 dark:border-slate-700 bg-transparent px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Your name" />
+              </div>
+              <div className="grid gap-2">
+                <label className="text-sm">Email</label>
+                <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="rounded-2xl border border-slate-300 dark:border-slate-700 bg-transparent px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="you@company.com" />
+              </div>
+              <div className="grid gap-2">
+                <label className="text-sm">Service</label>
+                <select value={form.service} onChange={(e) => setForm({ ...form, service: e.target.value })} className="rounded-2xl border border-slate-300 dark:border-slate-700 bg-transparent px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500">
+                  {services.map((s) => (
+                    <option key={s.title}>{s.title}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid gap-2">
+                <label className="text-sm">Budget/Timeline</label>
+                <input value={form.budget} onChange={(e) => setForm({ ...form, budget: e.target.value })} className="rounded-2xl border border-slate-300 dark:border-slate-700 bg-transparent px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g., ₹50k, 2 weeks" />
+              </div>
+              <div className="grid gap-2">
+                <label className="text-sm">Project Details</label>
+                <textarea required value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} rows={4} className="rounded-2xl border border-slate-300 dark:border-slate-700 bg-transparent px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="App type, tech stack, environments, deadlines..." />
+              </div>
+              <div className="flex flex-wrap gap-3 items-center">
+                <button type="submit" disabled={submitting} className="rounded-2xl px-5 py-3 bg-indigo-600 text-white font-medium hover:bg-indigo-500 disabled:opacity-60">
+                  {submitting ? "Sending…" : "Send Inquiry"}
+                </button>
+                <a href="https://calendly.com/yourlink/30min" className="rounded-2xl px-5 py-3 border border-slate-300 dark:border-slate-700">Book a 30‑min Call</a>
+                {submitMsg && <span className="text-sm text-slate-600 dark:text-slate-300">{submitMsg}</span>}
+              </div>
+              <p className="text-xs text-slate-500">Your message will be saved in my system and I’ll get notified.</p>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* ADMIN DASHBOARD (simple) */}
+      {adminView && (
+        <section className="max-w-6xl mx-auto px-4 py-16">
+          <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 md:p-10 shadow-sm">
+            <h2 className="text-2xl md:text-3xl font-semibold">Admin Dashboard</h2>
+            <p className="mt-2 text-slate-600 dark:text-slate-300">View and update incoming leads.</p>
+
+            {!adminToken && (
+              <div className="mt-6 grid sm:grid-cols-[1fr_auto] gap-3 items-end">
+                <div className="grid gap-2">
+                  <label className="text-sm">Admin Token</label>
+                  <input value={adminToken} onChange={(e) => setAdminToken(e.target.value)} className="rounded-2xl border border-slate-300 dark:border-slate-700 bg-transparent px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Enter token from backend .env" />
+                </div>
+                <button onClick={() => { localStorage.setItem("admin-token", adminToken); fetchLeads(); }} className="rounded-2xl px-5 py-3 bg-indigo-600 text-white font-medium">Save & Load</button>
+              </div>
+            )}
+
+            {adminToken && (
+              <div className="mt-6">
+                <div className="flex gap-3 mb-4">
+                  <button onClick={fetchLeads} className="rounded-2xl px-4 py-2 border border-slate-300 dark:border-slate-700">Refresh</button>
+                  <button onClick={() => { localStorage.removeItem("admin-token"); setAdminToken(""); setLeads([]); }} className="rounded-2xl px-4 py-2 border border-slate-300 dark:border-slate-700">Logout</button>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full text-sm">
+                    <thead>
+                      <tr className="text-left border-b border-slate-200 dark:border-slate-800">
+                        <th className="py-2 pr-4">ID</th>
+                        <th className="py-2 pr-4">Name</th>
+                        <th className="py-2 pr-4">Email</th>
+                        <th className="py-2 pr-4">Service</th>
+                        <th className="py-2 pr-4">Budget</th>
+                        <th className="py-2 pr-4">Message</th>
+                        <th className="py-2 pr-4">Status</th>
+                        <th className="py-2 pr-4">Created</th>
+                        <th className="py-2 pr-4">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {leads.map((l) => (
+                        <tr key={l.id} className="border-b border-slate-100 dark:border-slate-800">
+                          <td className="py-2 pr-4">{l.id}</td>
+                          <td className="py-2 pr-4">{l.name}</td>
+                          <td className="py-2 pr-4">{l.email}</td>
+                          <td className="py-2 pr-4">{l.service}</td>
+                          <td className="py-2 pr-4">{l.budget}</td>
+                          <td className="py-2 pr-4 max-w-[24ch] truncate" title={l.message}>{l.message}</td>
+                          <td className="py-2 pr-4">{l.status}</td>
+                          <td className="py-2 pr-4">{new Date(l.created_at).toLocaleString()}</td>
+                          <td className="py-2 pr-4 flex gap-2">
+                            {['new','in_review','responded','won','lost'].map(s => (
+                              <button key={s} onClick={() => updateLeadStatus(l.id, s)} className="rounded-full px-3 py-1 border border-slate-300 dark:border-slate-700 text-xs">{s}</button>
+                            ))}
+                          </td>
+                        </tr>
+                      ))}
+                      {leads.length === 0 && (
+                        <tr><td className="py-6 text-slate-500" colSpan={9}>No leads yet or invalid token.</td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* FOOTER */}
+      <footer className="py-10 border-t border-slate-200 dark:border-slate-800">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-slate-500">© {new Date().getFullYear()} Sudip Maji — Freelance QA Engineer</p>
+          <div className="text-sm flex gap-5 text-slate-600 dark:text-slate-300">
+            <a href="#services" className="hover:underline">Services</a>
+            <a href="#projects" className="hover:underline">Projects</a>
+            <a href="#contact" className="hover:underline">Contact</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
